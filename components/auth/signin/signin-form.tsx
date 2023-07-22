@@ -1,9 +1,9 @@
 "use client";
 import { z } from "zod";
-import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import { signIn } from "next-auth/react";
 import {
   Form,
   FormControl,
@@ -13,20 +13,20 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { signIn } from "next-auth/react";
-import { Loader2 } from "lucide-react";
-import { AlertCircle, FileWarning, Terminal } from "lucide-react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { AlertCircle, Loader2 } from "lucide-react";
+import * as React from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
-  firstName: z.string().min(3, "Firstname must be at least 3 characters"),
-  lastName: z.string().min(3, "Lastname must be at least 3 characters"),
 });
 
-const RegisterForm = () => {
-  const [registerError, setRegisterError] = React.useState();
+const SigninForm = () => {
+  const [loginError, setLoginError] = React.useState("");
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -34,72 +34,42 @@ const RegisterForm = () => {
     defaultValues: {
       email: "",
       password: "",
-      firstName: "",
-      lastName: "",
     },
   });
+
+  const callbackUrl = "/dashboard";
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const res = await fetch("/api/register", {
-        method: "POST",
-        body: JSON.stringify(values),
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const res = await signIn("credentials", {
+        redirect: false,
+        email: values.email,
+        password: values.password,
+        callbackUrl,
       });
 
-      if (!res.ok) {
-        const { message } = await res.json();
-        setRegisterError(message);
-        return;
+      if (!res?.error) {
+        router.push(callbackUrl);
+      } else {
+        setLoginError("Wrong credentials!");
       }
-
-      await signIn(undefined, { callbackUrl: "/dashboard" });
     } catch (error: any) {
       console.error(error);
+      alert(error.message);
     }
   }
 
   return (
     <Form {...form}>
-      {registerError && (
+      {loginError && (
         <Alert variant="destructive" className={"mb-4"}>
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Registration Failed</AlertTitle>
-          <AlertDescription>{registerError}</AlertDescription>
+          <AlertTitle>Sign-in Failed</AlertTitle>
+          <AlertDescription>{loginError}</AlertDescription>
         </Alert>
       )}
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div className="flex gap-2">
-          <FormField
-            control={form.control}
-            name="firstName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Firstname</FormLabel>
-                <FormControl>
-                  <Input placeholder="Jhon" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="lastName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Lastname</FormLabel>
-                <FormControl>
-                  <Input placeholder="Doe" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
         <FormField
           control={form.control}
           name="email"
@@ -120,7 +90,7 @@ const RegisterForm = () => {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input placeholder="Password" type="password" {...field} />
+                <Input placeholder="password" type="password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -134,10 +104,10 @@ const RegisterForm = () => {
           {form.formState.isSubmitting && (
             <Loader2 className={"animate-spin mr-1"} />
           )}
-          Register
+          Login
         </Button>
       </form>
     </Form>
   );
 };
-export default RegisterForm;
+export default SigninForm;

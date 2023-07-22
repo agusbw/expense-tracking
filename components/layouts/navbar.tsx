@@ -1,24 +1,27 @@
-import { Button, buttonVariants } from "@/components/ui/button";
+"use client";
+
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { signIn, signOut, useSession } from "next-auth/react";
+import { ModeToggle } from "../darkmode-toggle";
 
 const Navbar = () => {
+  const { data: session } = useSession();
+
   return (
-    <nav className="sticky top-0 py-4 border border-b ">
-      <div className="container flex items-center justify-between">
+    <div className="w-full flex items-center justify-between">
+      <Link href="/">
         <p className="font-semibold">ExpenseApp</p>
-        <div className="flex gap-2">
-          <Link
-            href={"/"}
-            className={buttonVariants({ variant: "link" })}
-          >
-            Home
-          </Link>
-          <Button asChild>
-            <Link href="/login">Login</Link>
-          </Button>
-        </div>
+      </Link>
+      <div className="flex gap-2">
+        <ModeToggle />
+        {session ? (
+          <Button onClick={() => signOut()}>Sign out</Button>
+        ) : (
+          <Button onClick={() => signIn()}>Sign in</Button>
+        )}
       </div>
-    </nav>
+    </div>
   );
 };
 
