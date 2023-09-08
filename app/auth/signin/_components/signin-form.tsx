@@ -64,7 +64,7 @@ const SigninForm = () => {
     <Form {...form}>
       {loginError && (
         <Alert variant="destructive" className={"mb-4"}>
-          <AlertCircle className="h-4 w-4" />
+          <AlertCircle className="w-4 h-4" />
           <AlertTitle>Sign-in Failed</AlertTitle>
           <AlertDescription>{loginError}</AlertDescription>
         </Alert>

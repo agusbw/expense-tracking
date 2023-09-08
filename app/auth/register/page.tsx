@@ -8,13 +8,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import RegisterForm from "@/components/auth/register/register-form";
+import RegisterForm from "../register/_components/register-form";
 import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 
 const page = () => {
   return (
-    <section className="flex justify-center items-center">
+    <section className="flex items-center justify-center">
       <Card className="w-full mx-4 max-w-[500px]">
         <CardHeader>
           <CardTitle>Create Account</CardTitle>
@@ -26,10 +26,7 @@ const page = () => {
         <CardFooter>
           <p>
             Already have an account?
-            <Button
-              variant={"link"}
-              onClick={() => signIn()}
-            >
+            <Button variant={"link"} onClick={() => signIn()}>
               Signin
             </Button>
           </p>

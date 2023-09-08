@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import SigninForm from "@/components/auth/signin/signin-form";
+import SigninForm from "@/app/auth/signin/_components/signin-form";
 import { buttonVariants } from "@/components/ui/button";
 import { twMerge } from "tailwind-merge";
 import Link from "next/link";
@@ -29,7 +29,7 @@ const page = () => {
               href={"/auth/register"}
               className={twMerge(
                 buttonVariants({ variant: "link" }),
-                "p-0 m-0 ml-1"
+                "p-0 m-0 ml-1",
               )}
             >
               Register
