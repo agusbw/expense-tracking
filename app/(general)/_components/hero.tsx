@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import heroPic from "../../app/assets/insert.svg";
+import heroPic from "../../assets/insert.svg";
 import { signIn } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -35,10 +35,7 @@ const Hero = () => {
             Welcome to our user-friendly expense management website, where
             financial freedom is just a click away!
           </p>
-          <Button
-            onClick={handleOnClick}
-            className="mx-auto"
-          >
+          <Button onClick={handleOnClick} className="mx-auto">
             Get Started
           </Button>
         </div>
